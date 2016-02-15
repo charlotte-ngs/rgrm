@@ -129,14 +129,43 @@ In the above sections we gave an outline of an algorithm that allows us to trace
 findSingleGrmElement <- function(pnElementIdx, pvFlatVec){
   ### # compute the dimensionality of the original matrx
   nMatDim <- nGetMatDim(pnLenFlatVec = length(pvFlatVec))
+  ### # compute vector of indices of diagonal elements
+  vDiagIdx <- cumsum(1:nMatDim)
+  ### # check whether pnElementIdx is a diagonal element, if yes, then special case
+  if (any(vDiagIdx == pnElementIdx)) {
+    nDiagIdx <- which(vDiagIdx == pnElementIdx)
+    lResultList <- list(nRowIndex=nDiagIdx, nColIndex=nDiagIdx, nCoefficient = pvFlatVec[pnElementIdx])
+  } else {
+    ### # off-diagonal
+    nElementRow <- which(vDiagIdx > pnElementIdx)[1]
+    nElementCol <- pnElementIdx - vDiagIdx[nElementRow-1]
+    lResultList <- list(nRowIndex=nElementRow, nColIndex=nElementCol, nCoefficient = pvFlatVec[pnElementIdx])
+  }
+  return(lResultList)
 }
 ```
 
-The function `findSingleGrmElement()` searches for a single element in the original matrix. The search is done only based on the element index and based on the flattened vector. In order to find our special element, we need a number of helper functions. The first helper function determines the dimension of the original matrix based on the length of the flattened vector. This can be done using the fact that the flattened vector contains all elements of the lower triangular part of the original matrix including the diagonal elements. Assuming that the original matrix has dimension $n\times n$, the total number of elements of the original matrix is $n^2$. The total number of elements below the diagonal without the diagonal elements is $(n^2-n)/2$. Adding the diagonal elements back in leads to $(n^2-n)/2 + n = n*(n+1)/2$. This expression corresponds to the length of our flattened vector. Hence known the length of the flattened vector, we can compute the number of rows and columns (n) of our original matrix. 
+The function `findSingleGrmElement()` searches for a single element in the original matrix. The search is done only based on the element index and based on the flattened vector. In order to find our special element, we need a number of helper functions. The first helper function determines the dimension of the original matrix based on the length of the flattened vector. This can be done using the fact that the flattened vector contains all elements of the lower triangular part of the original matrix including the diagonal elements. Assuming that the original matrix has dimension $n\times n$, the total number of elements of the original matrix is $n^2$. The total number of elements below the diagonal without the diagonal elements is $(n^2-n)/2$. Adding the diagonal elements back in leads to 
+
+$$(n^2-n)/2 + n = n*(n+1)/2$$ 
+
+This expression corresponds to the length ($l$) of our flattened vector. Given the length of the flattened vector, we can compute the number of rows and columns (n) of our original matrix, based on the solution formula for quadratic equations. 
+
+$$n = (-1 + \sqrt{1 + 8*l})/2 $$
 
 ```{r GetMatDim}
 nGetMatDim <- function(pnLenFlatVec) {
-  
+  # pnLenFlatVec must a be positive integer
+  if (pnLenFlatVec < 0) 
+    stop(paste("Length of flattened vector must be positive, found: ", pnLenFlatVec))
+  if (as.integer(pnLenFlatVec) - pnLenFlatVec != 0)
+    stop(paste("Length of flattened vector must be an integer, found: ", pnLenFlatVec))
+  # compute the matrix dimension
+  nMatDimResult <- (sqrt(1 + 8*pnLenFlatVec) - 1) / 2
+  # result must be integer
+  if ((as.integer(nMatDimResult) - nMatDimResult) != 0 )
+    stop(paste("Resulting matrix dimension not an integer:", nMatDimResult ))
+  return(nMatDimResult)
 }
 ```
 
