@@ -1,0 +1,82 @@
+---
+title: "Manual for Package rgrm"
+author: "Peter von Rohr"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manual for Package rgrm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r LoadPackageStuff, echo=FALSE, results='hide'}
+devtools::load_all()
+```
+
+### Disclaimer
+This document introduces the package `rgrm`.
+
+
+## Background
+This package came out of a task that involved the search for row and column indices in a genetic relationship matrix (grm). The solution of this task was generalized into topic of flattening lower (or upper) parts of symmetric matrices into vectors. From that flattened vector representation of the matrix, we wanted to search for special elements and we wanted to trace them back to their original location in the matrix.
+
+
+## Functionality
+This package offers only a small number of functions. The main function that is offered is the function `findMatrixElements()`
+. This function accepts two arguments as inputs. First a vector of indices into the flattenend vector and second the flattened vector it self. 
+
+### An Example
+As a simple example, we are given the following matrix 
+
+```{r GenerateMatrix, echo=FALSE}
+set.seed(2143)
+nNrInd <- 6
+mGrmP <- matrix(runif(n = nNrInd * nNrInd), ncol = nNrInd)
+mGrm <- crossprod(mGrmP)/nNrInd
+diag(mGrm) <- 1+diag(mGrm)
+print(mGrm)
+```
+
+in its flattened vector representation which stores only the lower triangular part of the matrix including the diagonal elements.
+
+```{r FlattenedGrm, echo=FALSE}
+vFlatMatElem <- flattenMatrixLowerTri(pMatrix = mGrm)
+print(vFlatMatElem)
+```
+
+```{r InterestingElements, echo=FALSE}
+vInterestingElements <- c(8,13)
+```
+
+Let us assume, that we are interested in elements with indices `r vInterestingElements[1]` and `r vInterestingElements[2]` of the flattened vector corresponding to values `r vFlatMatElem[vInterestingElements[1]]` and `r vFlatMatElem[vInterestingElements[2]]`, and we want to find where in the original matrix they occured, then the respective row and column indices can be computed as
+
+```{r ComputeElements}
+<<InterestingElements>>
+lSearchResult <- findMatrixElements(vInterestingElements, vFlatMatElem) 
+print(lSearchResult)
+```
+
+The result of this search is a list of lists. The length of the outer list corresponds to the number of elements that were specified as the first argument to function `findMatrixElements()`. Each component of the list of search results is a list with three components specifying the rowindex, the column index and the matrix value. 
+
+
+## Helper functions
+Besides the main function `findMatrixElements()`, package `rgrm` contains a number of helper functions. 
+
+### flattenMatrixLowerTri()
+Takes a symmetric matrix and converts it into a flattened representation of the lower triangular part of the matrix.
+
+### findSingleMatElement()
+Finds a single element of a flattened representation vector in the original matrix
+
+### nGetMatDim()
+Computes the dimension of the symmetric matrix given the length of the flattened representation vector.
+
+### runCompleteTest()
+Searches for all elements in a flattened representation vector
+
+
+## Session Info
+```{r}
+sessionInfo()
+```
+

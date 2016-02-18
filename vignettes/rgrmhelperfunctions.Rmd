@@ -6,7 +6,7 @@ output:
   html_document:
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Development Document of rgrm}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -291,4 +291,8 @@ Checking whether there are any differences between the elements from the flatten
 any(bCompareResult == FALSE)
 ```
 
+## Session Info
+```{r}
+sessionInfo()
+```
 
