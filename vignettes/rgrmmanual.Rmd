@@ -58,6 +58,15 @@ print(lSearchResult)
 
 The result of this search is a list of lists. The length of the outer list corresponds to the number of elements that were specified as the first argument to function `findMatrixElements()`. Each component of the list of search results is a list with three components specifying the rowindex, the column index and the matrix value. 
 
+## Convenience functions
+So far we have assumed that the flattened representation of the GRM is given as a vector. In practice this vector is produced by software programs like GCTA and has to be read from binary files. The GCTA website (http://cnsgenomics.com/software/gcta/estimate_grm.html) gives an R-function called `ReadGRMBin()` that reads a GRM from a binary file and returns a list with diagonal elements, offdiagonals, a vector of ids and the total number of individuals. 
+
+This function is also available in this package `rgrm` under the same name. Furthermore, we have added a simpler function that just returs the flattened representation vector. This function is called `readGRMBinToVector()`. 
+
+```{r ReadGrmBinToVector, eval=FALSE}
+vFlatMatElem <- readGRMBinToVector(prefix = sInputPrefix)
+```
+
 
 ## Helper functions
 Besides the main function `findMatrixElements()`, package `rgrm` contains a number of helper functions. 
