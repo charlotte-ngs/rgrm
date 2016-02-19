@@ -1,5 +1,5 @@
 ---
-title: "Manual for Package rgrm"
+title: "User Manual for Package rgrm"
 author: "Peter von Rohr"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r LoadPackageStuff, echo=FALSE, results='hide'}
+```{r LoadPackageStuff, eval=FALSE, echo=FALSE, results='hide'}
 devtools::load_all()
 ```
 
@@ -40,7 +40,7 @@ print(mGrm)
 in its flattened vector representation which stores only the lower triangular part of the matrix including the diagonal elements.
 
 ```{r FlattenedGrm, echo=FALSE}
-vFlatMatElem <- flattenMatrixLowerTri(pMatrix = mGrm)
+vFlatMatElem <- rgrm::flattenMatrixLowerTri(pMatrix = mGrm)
 print(vFlatMatElem)
 ```
 
@@ -52,7 +52,7 @@ Let us assume, that we are interested in elements with indices `r vInterestingEl
 
 ```{r ComputeElements}
 <<InterestingElements>>
-lSearchResult <- findMatrixElements(vInterestingElements, vFlatMatElem) 
+lSearchResult <- rgrm::findMatrixElements(vInterestingElements, vFlatMatElem) 
 print(lSearchResult)
 ```
 
@@ -63,8 +63,12 @@ So far we have assumed that the flattened representation of the GRM is given as 
 
 This function is also available in this package `rgrm` under the same name. Furthermore, we have added a simpler function that just returs the flattened representation vector. This function is called `readGRMBinToVector()`. 
 
-```{r ReadGrmBinToVector, eval=FALSE}
-vFlatMatElem <- readGRMBinToVector(prefix = sInputPrefix)
+```{r ReadGrmBinToVector, eval=TRUE}
+sInputPath <- system.file(package = "rgrm", file.path("extdata", "OmicKriging"))
+sInputPrefix <- "ig_genotypes.grm"
+vFlatMatElem <- rgrm::readGRMBinToVector(psInputPrefix = sInputPrefix, psInputPath = sInputPath)
+length(vFlatMatElem)
+head(vFlatMatElem)
 ```
 
 

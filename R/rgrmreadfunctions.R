@@ -63,22 +63,26 @@ ReadGRMBin=function(prefix, AllN=F, size=4){
 #' The data from the binary file are read using readLines and
 #' are stored in a vector
 #'
-#' @param     prefix   common prefix of input files
-#' @param     size     word size passed to readBin
+#' @param     psInputPrefix   common prefix of input files
+#' @param     psInputPath     path to input files
+#' @param     size            word size passed to readBin
 #' @return    vector with flattened represenation of GRM
 #' @export readGRMBinToVector
-readGRMBinToVector <- function(prefix, size = 4){
+readGRMBinToVector <- function(psInputPrefix, psInputPath = NULL, size = 4){
   ### # complete names of input files
-  BinFileName <- paste0(prefix, ".bin")
-  IDFileName <- paste0(prefix, ".id")
+  if (!is.null(psInputPath))
+    sInputPrefix <- file.path(psInputPath, psInputPrefix)
+  BinFileName <- paste0(sInputPrefix, ".bin")
+  IDFileName <- paste0(sInputPrefix, ".id")
   ### # read dataframe with ids
   dfIds <- read.table(IDFileName)
   nNrRowIds <- nrow(dfIds)
-  vFlatGrm <- readBin(con = BinFileName,
+  BinFile <- file(BinFileName, "rb")
+  vFlatGrm <- readBin(con = BinFile,
                       n = as.integer(nNrRowIds * (nNrRowIds + 1)/2),
                       what = numeric(0L),
                       size = size)
-  close(BinFileName)
+  close(BinFile)
   return(vFlatGrm)
 
 }

@@ -4,10 +4,12 @@
 \alias{readGRMBinToVector}
 \title{Read a GRM into a Vector}
 \usage{
-readGRMBinToVector(prefix, size = 4)
+readGRMBinToVector(psInputPrefix, psInputPath = NULL, size = 4)
 }
 \arguments{
-\item{prefix}{common prefix of input files}
+\item{psInputPrefix}{common prefix of input files}
+
+\item{psInputPath}{path to input files}
 
 \item{size}{word size passed to readBin}
 }
