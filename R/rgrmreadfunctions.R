@@ -75,7 +75,7 @@ readGRMBinToVector <- function(psInputPrefix, psInputPath = NULL, size = 4){
   BinFileName <- paste0(sInputPrefix, ".bin")
   IDFileName <- paste0(sInputPrefix, ".id")
   ### # read dataframe with ids
-  dfIds <- read.table(IDFileName)
+  dfIds <- read.table(IDFileName, stringsAsFactors = FALSE)
   nNrRowIds <- nrow(dfIds)
   BinFile <- file(BinFileName, "rb")
   vFlatGrm <- readBin(con = BinFile,
@@ -83,6 +83,5 @@ readGRMBinToVector <- function(psInputPrefix, psInputPath = NULL, size = 4){
                       what = numeric(0L),
                       size = size)
   close(BinFile)
-  return(vFlatGrm)
-
+  return(list(flatVec = vFlatGrm, id=dfIds))
 }

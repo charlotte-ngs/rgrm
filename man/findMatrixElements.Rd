@@ -4,12 +4,14 @@
 \alias{findMatrixElements}
 \title{Find row and column indices and matrix values for a vector of elements}
 \usage{
-findMatrixElements(pvElements, pvFlatVec)
+findMatrixElements(pvElements, pvFlatVec, pvIds = NA)
 }
 \arguments{
 \item{pvElements}{Vector of indices specifying elements to be searched for}
 
 \item{pvFlatVec}{Flattened vector represenation of symmetric matrix}
+
+\item{pvIds}{Optional vector of Ids, if !is.na(pvIds), then they are added to result}
 }
 \value{
 lResultLoL     Result list of lists with components nRowIndex, nColIndex and nCoefficient
@@ -23,6 +25,8 @@ for the specified elements.
 Flattening a symmetric matrix corresponds to saving the elements of the lower
 (or upper) triangular part of the matrix in a defined order in a vector. Given
 such a flattened representation of a matrix one might search for the exact
-location where in the original matrix certain elements did occur.
+location where in the original matrix certain elements did occur. If an additional
+vector if IDs is specified not only indices of rows and columns but also the
+IDs corresponding to these row and column indices are reported in the result.
 }
 

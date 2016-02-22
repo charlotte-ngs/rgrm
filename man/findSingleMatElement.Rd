@@ -4,12 +4,14 @@
 \alias{findSingleMatElement}
 \title{Find a single element of a symmetric matrix based on a flattened vector representation}
 \usage{
-findSingleMatElement(pnElementIdx, pvFlatVec)
+findSingleMatElement(pnElementIdx, pvFlatVec, pvIds = NA)
 }
 \arguments{
 \item{pnElementIdx}{Vector index of element to be searched for}
 
 \item{pvFlatVec}{Flattened vector represenation of symmetric matrix}
+
+\item{pvIds}{Optional vector of Ids, if !is.na(pvIds), then they are added to result}
 }
 \value{
 lResultList    Result list with components nRowIndex, nColIndex and nCoefficient

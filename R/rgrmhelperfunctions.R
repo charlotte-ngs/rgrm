@@ -35,9 +35,10 @@ flattenMatrixLowerTri <- function(pMatrix, psOrder = "rowwise", pbIncludeDiag = 
 #'
 #' @param  pnElementIdx   Vector index of element to be searched for
 #' @param  pvFlatVec      Flattened vector represenation of symmetric matrix
+#' @param  pvIds          Optional vector of Ids, if !is.na(pvIds), then they are added to result
 #' @return lResultList    Result list with components nRowIndex, nColIndex and nCoefficient
 #' @export
-findSingleMatElement <- function(pnElementIdx, pvFlatVec){
+findSingleMatElement <- function(pnElementIdx, pvFlatVec, pvIds = NULL){
   # pnElementIdx must a be positive integer
   if (pnElementIdx < 0)
     stop(paste("Length of flattened vector must be positive, found: ", pnElementIdx))
@@ -59,6 +60,13 @@ findSingleMatElement <- function(pnElementIdx, pvFlatVec){
     nElementRow <- which(vDiagIdx > pnElementIdx)[1]
     nElementCol <- pnElementIdx - vDiagIdx[nElementRow-1]
     lResultList <- list(nRowIndex=nElementRow, nColIndex=nElementCol, nCoefficient = pvFlatVec[pnElementIdx])
+  }
+  if (is.null(pvIds)) {
+    lResultList$sRowId = NA
+    lResultList$sColId = NA
+  } else {
+    lResultList$sRowId = pvIds[lResultList$nRowIndex]
+    lResultList$sColId = pvIds[lResultList$nColIndex]
   }
   return(lResultList)
 }
@@ -105,14 +113,17 @@ nGetMatDim <- function(pnLenFlatVec) {
 #' Flattening a symmetric matrix corresponds to saving the elements of the lower
 #' (or upper) triangular part of the matrix in a defined order in a vector. Given
 #' such a flattened representation of a matrix one might search for the exact
-#' location where in the original matrix certain elements did occur.
+#' location where in the original matrix certain elements did occur. If an additional
+#' vector if IDs is specified not only indices of rows and columns but also the
+#' IDs corresponding to these row and column indices are reported in the result.
 #'
 #' @param  pvElements     Vector of indices specifying elements to be searched for
 #' @param  pvFlatVec      Flattened vector represenation of symmetric matrix
+#' @param  pvIds          Optional vector of Ids, if !is.na(pvIds), then they are added to result
 #' @return lResultLoL     Result list of lists with components nRowIndex, nColIndex and nCoefficient
 #' @export
-findMatrixElements <- function(pvElements, pvFlatVec){
-  lResultLoL <- lapply(pvElements, findSingleMatElement, pvFlatVec)
+findMatrixElements <- function(pvElements, pvFlatVec, pvIds = NA){
+  lResultLoL <- lapply(pvElements, findSingleMatElement, pvFlatVec, pvIds = pvIds)
   return(lResultLoL)
 }
 

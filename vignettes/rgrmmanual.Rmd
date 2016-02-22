@@ -18,12 +18,12 @@ This document introduces the package `rgrm`.
 
 
 ## Background
-This package came out of a task that involved the search for row and column indices in a genetic relationship matrix (grm). The solution of this task was generalized into topic of flattening lower (or upper) parts of symmetric matrices into vectors. From that flattened vector representation of the matrix, we wanted to search for special elements and we wanted to trace them back to their original location in the matrix.
+This package came out of a task that involved the search for row and column indices in a genetic relationship matrix (grm). The solution of this task was generalized into the topic of flattening lower (or upper) parts of symmetric matrices into vectors. From that flattened vector representation of the matrix, we want to search for special elements and we want to trace them back to their original location in the matrix.
 
 
 ## Functionality
 This package offers only a small number of functions. The main function that is offered is the function `findMatrixElements()`
-. This function accepts two arguments as inputs. First a vector of indices into the flattenend vector and second the flattened vector it self. 
+. This function accepts two arguments as inputs. First a vector of indices into the flattenend vector and second the flattened vector itself. Optionally a vector of IDs can be specified in case row and column indices are associated with special IDs. This is an optional argument which should only make identification of results easier and more convenient. 
 
 ### An Example
 As a simple example, we are given the following matrix 
@@ -66,10 +66,20 @@ This function is also available in this package `rgrm` under the same name. Furt
 ```{r ReadGrmBinToVector, eval=TRUE}
 sInputPath <- system.file(package = "rgrm", file.path("extdata", "OmicKriging"))
 sInputPrefix <- "ig_genotypes.grm"
-vFlatMatElem <- rgrm::readGRMBinToVector(psInputPrefix = sInputPrefix, psInputPath = sInputPath)
+lFlatMatElem <- rgrm::readGRMBinToVector(psInputPrefix = sInputPrefix, psInputPath = sInputPath)
+vFlatMatElem <- lFlatMatElem$flatVec
 length(vFlatMatElem)
 head(vFlatMatElem)
+nrow(lFlatMatElem$id)
+head(lFlatMatElem$id)
 ```
+
+A small search including Ids may look as follows
+
+```{r SmallSearchWithIds}
+rgrm::findMatrixElements(1:3, vFlatMatElem, as.vector(lFlatMatElem$id[,2]))
+```
+
 
 
 ## Helper functions
