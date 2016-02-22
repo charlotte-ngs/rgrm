@@ -1,0 +1,298 @@
+---
+title: "Get Elements of a Symmetric Matrix"
+author: "Peter von Rohr"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+vignette: >
+  %\VignetteIndexEntry{Development Document of rgrm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Given the following problem. Suppose we have a large symmetric matrix of a certain dimension $n$ of which the lower triangular part is stored in a vector. We want to find all row- and column-indices of elements of the original matrix that fullfill a certain property. 
+
+### Background
+The genetic relationship matrix (GRM) between $n$ individuals is a symmetric matrix of dimension $n\times n$. Software programs that are used to compute the GRM such as GCTA store the lower triangular part of the matrix in a vector. In case we want to know pairs of individuals that have genetic relationship coefficients above a certain threshold, we need to know the row- and column-indices of the original matrix where the coefficients above a certain threshold occur in the original GRM. 
+
+### Small example
+Let us try to explain the problem based on a small example. Suppose the GRM between a small number of individuals has the following structure. For the purpose of this blog-post, we create a matrix based on random uniform numbers. Since the diagonals of a GRM are all larger than 1, we add 1 to the diagonal.
+
+
+```{r GenerateGRM}
+set.seed(4321)
+nNrInd <- 6
+mGrmP <- matrix(runif(n = nNrInd * nNrInd), ncol = nNrInd)
+mGrm <- crossprod(mGrmP)/nNrInd
+diag(mGrm) <- 1+diag(mGrm)
+print(mGrm)
+```
+
+### First flattening the matrix into a vector
+The lower triangular part of the above matrix can be stored in a vector as follows. 
+
+```{r FlattenGrm}
+vGrmLowTri <- vector(mode = "numeric", length = sum(1:nNrInd))
+nVecIdx <- 1
+for (nRowIdx in 1:nrow(mGrm)){
+  for (nColIdx in 1:nRowIdx){
+    vGrmLowTri[nVecIdx] <- mGrm[nRowIdx, nColIdx]
+    nVecIdx <- nVecIdx + 1
+  }
+}
+print(vGrmLowTri)
+```
+
+From the above, we can see that the order of the elements is to be taken row-wise, that means, in the outer loop we step through each row of the matrix and inside of each row, the inner loop runs from the first element up until the diagonal element. 
+
+### Alternative to loops
+R has internal functions to extract lower and upper triangular elements of a matrix. Those functions are `lower.tri()` and `upper.tri()` as arguments they take the matrix and a boolean flag which indicates whether the diagonal elements should be included or not. 
+
+Since we are interested in the lower triangular of our matrix, it would seam obvious to use the function `lower.tri()`. 
+
+```{r LowerTriMatrix}
+lower.tri(mGrm, diag = TRUE)
+```
+
+The result of applying the function `lower.tri()` to our matrix is a boolean matrix of the same dimension as the input matrix where all elements of the lower triangular including the diagnal elements are TRUE and all other elements are FALSE. 
+
+Using the boolean matrix that comes out of the function `lower.tri()` as index selector for our original GRM matrix, flattens the lower triangular elements into a vector but the order is taken column-wise and not row-wise. As a consequence the resulting flattened vector is not the same as the vector that we obtained from our two nested loops above. Therefore, it seams that our idea of using R's internal function `lower.tri()` for flattening the GRM matrix into a vector does not work. 
+
+
+```{r FlattenRowWise}
+mGrm[lower.tri(mGrm, diag = TRUE)]
+```
+
+### Saving our idea
+Our original numeric matrix is symmetric and hence the elements above the diagonal are the same as below the diagonal. Further more the order of the elements is the same when running through the matrix row-wise below the diagonal as when running through the matrix column-wise above the diagonal. Hence, instead of using `lower.tri()`, we have to use `upper.tri()`. As shown below, we get the same flattened vector as from the two iterated loops. 
+
+```{r FlattenColumnWise}
+vFlatMatElem <- mGrm[upper.tri(mGrm, diag = TRUE)]
+print(vFlatMatElem)
+identical(vFlatMatElem, vGrmLowTri)
+```
+
+## Finding a given element in the matrix
+Let us assume, we are given the flattened vector of the lower triangular part of our GRM matrix. Furthermore, we want to select some special components in the vector and want to trace back where they occured in the original matrix. That means we want to know the row and the column indices of the special component in the original matrix.
+
+### Diagonal elements
+One group of special elements are the diagonal elements of the original matrix. From our process of flattening the lower triangular part of our original matrix into a vector, we can observe that on a given row i, there are exactly i elements from column 1 until the diagonal element of row i. Based on that observation, the number of elements that are stored in the flattened vector up to the diagonal element of row i corresponds to the sum of all natural numbers from 1 up to and including i. 
+
+$$ \sum_{j=i}^i j$$
+
+Computing that number for all rows in the matrix we can store all indices of the flattened vector corresponding to diagonal elements as follows. 
+
+```{r DiagonalElementsIndex}
+vFlatDiagIdx <- cumsum(1:nrow(mGrm))
+print(vFlatDiagIdx)
+```
+
+From that index vector, all diagonal elements can be extracted by 
+
+```{r ExtractDiagonalElement}
+vFlatMatElem[vFlatDiagIdx]
+```
+
+Now it is easy to also get all the off-diagonal elements by
+
+```{r ExtractOffDiagonals}
+vFlatMatElem[-c(vFlatDiagIdx)]
+```
+
+### A particular element
+```{r AssignElem12, echo=FALSE}
+nElemIdx <- 12
+```
+
+Let us assume, we are interested in element `r nElemIdx` of the flattened vector. 
+
+```{r Element12}
+<<AssignElem12>>
+vFlatMatElem[nElemIdx]
+```
+
+```{r ElementRow, echo=FALSE}
+nElementRow <- which(vFlatDiagIdx > nElemIdx)[1]
+```
+
+Our goal is to find out on which row and which column this element occurs in the original matrix. Our index vector of the diagonal elements already tells us that element `r vFlatDiagIdx[nElementRow-1]` is the last element of the row `r nElementRow-1` and element `r vFlatDiagIdx[nElementRow]` is the last element of the row `r nElementRow`. Element `r nElemIdx` must then be somewhere on row `r nElementRow`. We now want to compute where exactly that element occurs in the matrix. First we start with the row index. The row index corresponds to the index of our vector of diagonal element indices, where for the first time the element in the index vector is larger than the index of our special element. The column index is computed as the difference between the index of our special element (`r nElemIdx`) and the index of the diagonal element (`r vFlatDiagIdx[nElementRow-1]`) of the previous row (`r nElementRow-1`)
+
+```{r GetMatRowIndex}
+<<AssignElem12>>
+<<ElementRow>>
+nElementCol <- nElemIdx-vFlatDiagIdx[nElementRow-1]
+cat(" * Row: ", nElementRow, "\n * Col: ", nElementCol, "\n")
+```
+
+Checking our result
+
+```{r CheckResult}
+identical(vFlatMatElem[12], mGrm[nElementRow,nElementCol])
+```
+
+## Wrapping all up into a function
+In the above sections we gave an outline of an algorithm that allows us to trace back elements from a flattened vector back to the original matrix. We want to wrap that up into a function, that takes as input, the flattened vector and the index of a special element. The function computes the row and the column indices and returns the respective element of the matrix.
+
+```{r FindGrmElement}
+#' Find a single element of a symmetric matrix based on a flattened vector representation
+#'
+#' Given a flattened vector representation of a symmatric matrix \code{findSingleMatElement}
+#' computes the row and column indices in the original matrix of a given element. The element 
+#' is given by the index of the flattened vector. The flattened vector is a vector that contains 
+#' all elements of the lower triangular part of the matrix including all diagonal elements. The 
+#' order in which the elements are written to the vector is going through each row and copying 
+#' each element from column one up to the diagonal element of that row into the flattened 
+#' vector.
+#'
+#' @param  pnElementIdx   Vector index of element to be searched for
+#' @param  pvFlatVec      Flattened vector represenation of symmetric matrix
+#' @return lResultList    Result list with components nRowIndex, nColIndex and nCoefficient
+findSingleMatElement <- function(pnElementIdx, pvFlatVec){  
+  # pnElementIdx must a be positive integer
+  if (pnElementIdx < 0) 
+    stop(paste("Length of flattened vector must be positive, found: ", pnElementIdx))
+  if (as.integer(pnElementIdx) - pnElementIdx != 0)
+    stop(paste("Length of flattened vector must be an integer, found: ", pnElementIdx))
+  ### # pnElementIdx cannot be larger than the length of pvFlatVec
+  if (pnElementIdx > length(pvFlatVec))
+    stop("Elementindex cannot be larger than length of index vector")
+  ### # compute the dimensionality of the original matrx
+  nMatDim <- nGetMatDim(pnLenFlatVec = length(pvFlatVec))
+  ### # compute vector of indices of diagonal elements
+  vDiagIdx <- cumsum(1:nMatDim)
+  ### # check whether pnElementIdx is a diagonal element, if yes, then special case
+  if (any(vDiagIdx == pnElementIdx)) {
+    nDiagIdx <- which(vDiagIdx == pnElementIdx)
+    lResultList <- list(nRowIndex=nDiagIdx, nColIndex=nDiagIdx, nCoefficient = pvFlatVec[pnElementIdx])
+  } else {
+    ### # off-diagonal
+    nElementRow <- which(vDiagIdx > pnElementIdx)[1]
+    nElementCol <- pnElementIdx - vDiagIdx[nElementRow-1]
+    lResultList <- list(nRowIndex=nElementRow, nColIndex=nElementCol, nCoefficient = pvFlatVec[pnElementIdx])
+  }
+  return(lResultList)
+}
+```
+
+The function `findSingleMatElement()` searches for a single element in the original matrix. The search is done only based on the element index and based on the flattened vector. In order to find our special element, we need a helper function to determine the dimension of the original matrix based on the length of the flattened vector. This can be done using the fact that the flattened vector contains all elements of the lower triangular part of the original matrix including the diagonal elements. Assuming that the original matrix has dimension $n\times n$, the total number of elements of the original matrix is $n^2$. The total number of elements below the diagonal without the diagonal elements is $(n^2-n)/2$. Adding the diagonal elements back in leads to 
+
+$$(n^2-n)/2 + n = n*(n+1)/2$$ 
+
+This expression corresponds to the length ($l$) of our flattened vector. Given the length of the flattened vector, we can compute the number of rows and columns (n) of our original matrix, based on the solution formula for quadratic equations. 
+
+$$n = (-1 + \sqrt{1 + 8*l})/2 $$
+
+```{r GetMatDim}
+#' Compute matrix dimension based on the length of a flattened vector
+#'
+#' The flattened vector contains all elements of the lower triangular 
+#' part of a symmetric matrix including all diagonal elements. Because 
+#' any row i of a quadratic matrix contains i elements below the 
+#' diagonal, including the diagonal element, the flattened vector of 
+#' an n * n symmetric matrix contains the sum of all natural numbers 
+#' up to and including n. That length has a closed form and corresponds 
+#' to n*(n+1)/2. Given the length of the flattened vector, we have 
+#' a quadratic equation for n, that can be solved. We are only interested 
+#' in the positive solution which is n = (-1 + \sqrt(1+8l))/2
+#'
+#' @param    pnLenFlatVec    length of flattened vector
+#' @return   nMatDimResult   dimension of symmetric matrix
+nGetMatDim <- function(pnLenFlatVec) {
+  # pnLenFlatVec must a be positive integer
+  if (pnLenFlatVec < 0) 
+    stop(paste("Length of flattened vector must be positive, found: ", pnLenFlatVec))
+  if (as.integer(pnLenFlatVec) - pnLenFlatVec != 0)
+    stop(paste("Length of flattened vector must be an integer, found: ", pnLenFlatVec))
+  # compute the matrix dimension
+  nMatDimResult <- (sqrt(1 + 8*pnLenFlatVec) - 1) / 2
+  # result must be integer
+  if ((as.integer(nMatDimResult) - nMatDimResult) != 0 )
+    stop(paste("Resulting matrix dimension not an integer:", nMatDimResult ))
+  return(nMatDimResult)
+}
+```
+
+### Testing our function
+Searching element 12 is done with
+
+```{r SearchElement12}
+lElemFound <- findSingleMatElement(pnElementIdx = 12, pvFlatVec = vFlatMatElem)
+print(lElemFound)
+identical(lElemFound$nCoefficient, mGrm[lElemFound$nRowIndex, lElemFound$nColIndex])
+```
+
+### Searching for a group of elements
+```{r ElementThreshold, echo=FALSE}
+nElementThreshold <- 0.12
+```
+
+As an example, we want to find all elements that are smaller than `r nElementThreshold`. Elements that meet that criterion are found with 
+
+```{r SelElemGroup}
+<<ElementThreshold>>
+vElemGroup <- which(vFlatMatElem < nElementThreshold)
+```
+
+That element vector can be used together with our function `findSingleMatElement()` as arguments to `lapply()`. 
+
+```{r SearchElementGroup}
+lapply(vElemGroup, findSingleMatElement, vFlatMatElem)
+```
+
+### Running the complete test
+The complete test searches for all elements in the flattend vector. This can be done again using `lapply()`. 
+
+```{r CompleteTest}
+lCompTestResults <- lapply(1:length(vFlatMatElem), findSingleMatElement, vFlatMatElem)
+```
+
+The results from selecting all elements is compared to the elements in the matrix. 
+
+```{r CompareResults}
+nRowIndex <- NULL
+nColIndex <- NULL
+nCoefficient <- NULL
+nMatElement <- NULL
+bCompareResult <- NULL
+for (lCurResult in lCompTestResults){
+  ### # collect items
+  if (is.null(nRowIndex)){
+    nRowIndex <- lCurResult$nRowIndex
+    nColIndex <- lCurResult$nColIndex
+    nCoefficient <- lCurResult$nCoefficient
+    nMatElement <- mGrm[lCurResult$nRowIndex,lCurResult$nColIndex]
+    bCompareResult <- identical(lCurResult$nCoefficient,mGrm[lCurResult$nRowIndex,lCurResult$nColIndex])
+  } else {
+    nRowIndex <- c(nRowIndex, lCurResult$nRowIndex)
+    nColIndex <- c(nColIndex, lCurResult$nColIndex)
+    nCoefficient <- c(nCoefficient, lCurResult$nCoefficient)
+    nMatElement <- c(nMatElement, mGrm[lCurResult$nRowIndex,lCurResult$nColIndex])
+    bCompareResult <- c(bCompareResult, identical(lCurResult$nCoefficient,mGrm[lCurResult$nRowIndex,lCurResult$nColIndex]))
+    
+  }
+}
+dfResults <- data.frame(nRowIndex, 
+                        nColIndex, 
+                        nCoefficient, 
+                        nMatElement, 
+                        bCompareResult, 
+                        stringsAsFactors = FALSE)
+```
+
+Showing the above collected results as a table looks as follows
+```{r ResultTable}
+knitr::kable(dfResults)
+```
+
+Checking whether there are any differences between the elements from the flattened vector and the matrix elements leads to
+
+```{r CheckForDiff}
+any(bCompareResult == FALSE)
+```
+
+## Session Info
+```{r}
+sessionInfo()
+```
+

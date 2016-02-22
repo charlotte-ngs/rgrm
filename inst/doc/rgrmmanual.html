@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Peter von Rohr" />
+
+<meta name="date" content="2016-02-22" />
+
+<title>User Manual for Package rgrm</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">User Manual for Package rgrm</h1>
+<h4 class="author"><em>Peter von Rohr</em></h4>
+<h4 class="date"><em>2016-02-22</em></h4>
+</div>
+
+
+<pre><code>## Loading required package: rgrm</code></pre>
+<pre><code>## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
+## logical.return = TRUE, : there is no package called 'rgrm'</code></pre>
+<pre><code>## Loading rgrm</code></pre>
+<div id="disclaimer" class="section level3">
+<h3>Disclaimer</h3>
+<p>This document introduces the package <code>rgrm</code>.</p>
+</div>
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>This package came out of a task that involved the search for row and column indices in a genetic relationship matrix (grm). The solution of this task was generalized into the topic of flattening lower (or upper) parts of symmetric matrices into vectors. From that flattened vector representation of the matrix, we want to search for special elements and we want to trace them back to their original location in the matrix.</p>
+</div>
+<div id="functionality" class="section level2">
+<h2>Functionality</h2>
+<p>This package offers only a small number of functions. The main function that is offered is the function <code>findMatrixElements()</code> . This function accepts two arguments as inputs. First a vector of indices into the flattenend vector and second the flattened vector itself. Optionally a vector of IDs can be specified in case row and column indices are associated with special IDs. This is an optional argument which should only make identification of results easier and more convenient.</p>
+<div id="an-example" class="section level3">
+<h3>An Example</h3>
+<p>As a simple example, we are given the following matrix</p>
+<pre><code>##           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
+## [1,] 1.3605593 0.1265609 0.2556560 0.3778407 0.2077978 0.3521481
+## [2,] 0.1265609 1.0604207 0.1193115 0.1406555 0.1016289 0.1288596
+## [3,] 0.2556560 0.1193115 1.3133655 0.3454695 0.2068810 0.3396131
+## [4,] 0.3778407 0.1406555 0.3454695 1.4947225 0.2704006 0.4453167
+## [5,] 0.2077978 0.1016289 0.2068810 0.2704006 1.2029627 0.2229617
+## [6,] 0.3521481 0.1288596 0.3396131 0.4453167 0.2229617 1.4351763</code></pre>
+<p>in its flattened vector representation which stores only the lower triangular part of the matrix including the diagonal elements.</p>
+<pre><code>##  [1] 1.3605593 0.1265609 1.0604207 0.2556560 0.1193115 1.3133655 0.3778407
+##  [8] 0.1406555 0.3454695 1.4947225 0.2077978 0.1016289 0.2068810 0.2704006
+## [15] 1.2029627 0.3521481 0.1288596 0.3396131 0.4453167 0.2229617 1.4351763</code></pre>
+<p>Let us assume, that we are interested in elements with indices 8 and 13 of the flattened vector corresponding to values 0.1406555 and 0.206881, and we want to find where in the original matrix they occured, then the respective row and column indices can be computed as</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vInterestingElements &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">8</span>,<span class="dv">13</span>)
+lSearchResult &lt;-<span class="st"> </span>rgrm::<span class="kw">findMatrixElements</span>(vInterestingElements, vFlatMatElem) 
+<span class="kw">print</span>(lSearchResult)</code></pre></div>
+<pre><code>## [[1]]
+## [[1]]$nRowIndex
+## [1] 4
+## 
+## [[1]]$nColIndex
+## [1] 2
+## 
+## [[1]]$nCoefficient
+## [1] 0.1406555
+## 
+## [[1]]$sRowId
+## [1] NA
+## 
+## [[1]]$sColId
+## [1] NA
+## 
+## 
+## [[2]]
+## [[2]]$nRowIndex
+## [1] 5
+## 
+## [[2]]$nColIndex
+## [1] 3
+## 
+## [[2]]$nCoefficient
+## [1] 0.206881
+## 
+## [[2]]$sRowId
+## [1] NA
+## 
+## [[2]]$sColId
+## [1] NA</code></pre>
+<p>The result of this search is a list of lists. The length of the outer list corresponds to the number of elements that were specified as the first argument to function <code>findMatrixElements()</code>. Each component of the list of search results is a list with three components specifying the rowindex, the column index and the matrix value.</p>
+</div>
+</div>
+<div id="convenience-functions" class="section level2">
+<h2>Convenience functions</h2>
+<p>So far we have assumed that the flattened representation of the GRM is given as a vector. In practice this vector is produced by software programs like GCTA and has to be read from binary files. The GCTA website (<a href="http://cnsgenomics.com/software/gcta/estimate_grm.html" class="uri">http://cnsgenomics.com/software/gcta/estimate_grm.html</a>) gives an R-function called <code>ReadGRMBin()</code> that reads a GRM from a binary file and returns a list with diagonal elements, offdiagonals, a vector of ids and the total number of individuals.</p>
+<p>This function is also available in this package <code>rgrm</code> under the same name. Furthermore, we have added a simpler function that just returs the flattened representation vector. This function is called <code>readGRMBinToVector()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sInputPath &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="dt">package =</span> <span class="st">&quot;rgrm&quot;</span>, <span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;OmicKriging&quot;</span>))
+sInputPrefix &lt;-<span class="st"> &quot;ig_genotypes.grm&quot;</span>
+lFlatMatElem &lt;-<span class="st"> </span>rgrm::<span class="kw">readGRMBinToVector</span>(<span class="dt">psInputPrefix =</span> sInputPrefix, <span class="dt">psInputPath =</span> sInputPath)
+vFlatMatElem &lt;-<span class="st"> </span>lFlatMatElem$flatVec
+<span class="kw">length</span>(vFlatMatElem)</code></pre></div>
+<pre><code>## [1] 4950</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(vFlatMatElem)</code></pre></div>
+<pre><code>## [1] 1.05338585 0.08278118 1.06407845 0.06493656 0.06603287 1.05670655</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span>(lFlatMatElem$id)</code></pre></div>
+<pre><code>## [1] 99</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(lFlatMatElem$id)</code></pre></div>
+<pre><code>##     V1      V2
+## 1 1444 NA12750
+## 2 1350 NA11831
+## 3 1334 NA12146
+## 4 1340 NA07056
+## 5 1408 NA12154
+## 6 1349 NA11839</code></pre>
+<p>A small search including Ids may look as follows</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rgrm::<span class="kw">findMatrixElements</span>(<span class="dv">1</span>:<span class="dv">3</span>, vFlatMatElem, <span class="kw">as.vector</span>(lFlatMatElem$id[,<span class="dv">2</span>]))</code></pre></div>
+<pre><code>## [[1]]
+## [[1]]$nRowIndex
+## [1] 1
+## 
+## [[1]]$nColIndex
+## [1] 1
+## 
+## [[1]]$nCoefficient
+## [1] 1.053386
+## 
+## [[1]]$sRowId
+## [1] &quot;NA12750&quot;
+## 
+## [[1]]$sColId
+## [1] &quot;NA12750&quot;
+## 
+## 
+## [[2]]
+## [[2]]$nRowIndex
+## [1] 2
+## 
+## [[2]]$nColIndex
+## [1] 1
+## 
+## [[2]]$nCoefficient
+## [1] 0.08278118
+## 
+## [[2]]$sRowId
+## [1] &quot;NA11831&quot;
+## 
+## [[2]]$sColId
+## [1] &quot;NA12750&quot;
+## 
+## 
+## [[3]]
+## [[3]]$nRowIndex
+## [1] 2
+## 
+## [[3]]$nColIndex
+## [1] 2
+## 
+## [[3]]$nCoefficient
+## [1] 1.064078
+## 
+## [[3]]$sRowId
+## [1] &quot;NA11831&quot;
+## 
+## [[3]]$sColId
+## [1] &quot;NA11831&quot;</code></pre>
+</div>
+<div id="helper-functions" class="section level2">
+<h2>Helper functions</h2>
+<p>Besides the main function <code>findMatrixElements()</code>, package <code>rgrm</code> contains a number of helper functions.</p>
+<div id="flattenmatrixlowertri" class="section level3">
+<h3>flattenMatrixLowerTri()</h3>
+<p>Takes a symmetric matrix and converts it into a flattened representation of the lower triangular part of the matrix.</p>
+</div>
+<div id="findsinglematelement" class="section level3">
+<h3>findSingleMatElement()</h3>
+<p>Finds a single element of a flattened representation vector in the original matrix</p>
+</div>
+<div id="ngetmatdim" class="section level3">
+<h3>nGetMatDim()</h3>
+<p>Computes the dimension of the symmetric matrix given the length of the flattened representation vector.</p>
+</div>
+<div id="runcompletetest" class="section level3">
+<h3>runCompleteTest()</h3>
+<p>Searches for all elements in a flattened representation vector</p>
+</div>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+<pre><code>## R version 3.2.3 (2015-12-10)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 7 x64 (build 7601) Service Pack 1
+## 
+## locale:
+## [1] LC_COLLATE=German_Switzerland.1252  LC_CTYPE=German_Switzerland.1252   
+## [3] LC_MONETARY=German_Switzerland.1252 LC_NUMERIC=C                       
+## [5] LC_TIME=German_Switzerland.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] rgrm_0.1.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] magrittr_1.5    formatR_1.2.1   htmltools_0.3   tools_3.2.3    
+##  [5] roxygen2_5.0.1  yaml_2.1.13     Rcpp_0.12.3     memoise_0.2.1  
+##  [9] stringi_1.0-1   rmarkdown_0.9.2 highr_0.5.1     knitr_1.12.3   
+## [13] stringr_1.0.0   digest_0.6.9    devtools_1.9.1  evaluate_0.8</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
