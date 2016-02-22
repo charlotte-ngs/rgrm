@@ -19,8 +19,8 @@ any row i of a quadratic matrix contains i elements below the
 diagonal, including the diagonal element, the flattened vector of
 an n * n symmetric matrix contains the sum of all natural numbers
 up to and including n. That length has a closed form and corresponds
-to n*(n+1)/2. Given the length of the flattened vector, we have
+to \eqn{n*(n+1)/2}. Given the length of the flattened vector, we have
 a quadratic equation for n, that can be solved. We are only interested
-in the positive solution which is n = (-1 + \sqrt(1+8l))/2
+in the positive solution which is \eqn{n = (-1 + \sqrt(1+8l))/2}
 }
 

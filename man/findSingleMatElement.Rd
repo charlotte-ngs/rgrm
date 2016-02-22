@@ -4,7 +4,7 @@
 \alias{findSingleMatElement}
 \title{Find a single element of a symmetric matrix based on a flattened vector representation}
 \usage{
-findSingleMatElement(pnElementIdx, pvFlatVec, pvIds = NA)
+findSingleMatElement(pnElementIdx, pvFlatVec, pvIds = NULL)
 }
 \arguments{
 \item{pnElementIdx}{Vector index of element to be searched for}
